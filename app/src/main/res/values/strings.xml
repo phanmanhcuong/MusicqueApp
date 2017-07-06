@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MusiqueApp</string>
+    <string name="btn_menu">Menu</string>
+    <string name="btn_search">Search</string>
+    <string name="string_songs">Songs</string>
+    <string name="string_albums">Albums</string>
+    <string name="string_artists">Artists</string>
+</resources>
