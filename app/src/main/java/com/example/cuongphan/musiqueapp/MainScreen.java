@@ -1,9 +1,7 @@
 package com.example.cuongphan.musiqueapp;
 
-import android.content.ContentUris;
-import android.media.AudioManager;
+import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
@@ -16,26 +14,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.io.IOException;
-
-public class MainScreen extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
-    public static MediaPlayer sMediaPlayer = new MediaPlayer();
+public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
     public static SeekBar sSongProgressBar;
     private static ImageButton sImgBtnPlay;
-    private static TextView sTvSongName;
-    private static TextView sTvArtist;
+    private static int currentDuration;
+    private static int currentPosition;
+    private static boolean isPlaying;
+    private static TextView tvSongName;
+    private static TextView tvArtist;
+
     Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.song_listview);
+        setContentView(R.layout.main_screen);
 
         //add actionbar
         ActionBar actionBar = this.getSupportActionBar();
-        //actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.app_icon);
 
         //initialize tablayyout
@@ -72,53 +72,47 @@ public class MainScreen extends AppCompatActivity implements SeekBar.OnSeekBarCh
         sSongProgressBar.setMax(100);
 
         //update seekbar
-        sSongProgressBar.setOnSeekBarChangeListener(this);
         mHandler.postDelayed(updateSeekBar, 100);
-
-        sTvSongName = (TextView)findViewById(R.id.tv_songname);
-        sTvArtist = (TextView)findViewById(R.id.tv_artist);
 
         sImgBtnPlay = (ImageButton)findViewById(R.id.imgbtn_play);
         sImgBtnPlay.setOnClickListener(new playPauseSong());
-    }
 
+        tvArtist = (TextView)findViewById(R.id.tv_artist);
+        tvSongName = (TextView)findViewById(R.id.tv_songname);
+
+        RelativeLayout rl_song_process = (RelativeLayout)findViewById(R.id.rl_song_process);
+        rl_song_process.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainScreen.this, PlayingMusicControl.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
+    }
 
     private  Runnable updateSeekBar = new Runnable() {
         @Override
         public void run() {
-            int duration = sMediaPlayer.getDuration();
-            int currentProsition = sMediaPlayer.getCurrentPosition();
-            sSongProgressBar.setMax(duration);
-            sSongProgressBar.setProgress(currentProsition);
+            sSongProgressBar.setMax(currentDuration);
+            sSongProgressBar.setProgress(currentPosition);
             mHandler.postDelayed(this, 100);
         }
     };
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        sSongProgressBar.setProgress(progress);
-        sMediaPlayer.seekTo(progress);
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.mainscreen_actionbar_menu, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.btn_search).getActionView();
+        final SearchView searchView = (SearchView) menu.findItem(R.id.btn_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                String searchText = query;
+            public boolean onQueryTextSubmit(String keyword) {
+                SongsTab songsTab = new SongsTab();
+                songsTab.searchSong(MainScreen.this, keyword);
+                //close keyboard
+                searchView.clearFocus();
                 return true;
             }
 
@@ -127,17 +121,21 @@ public class MainScreen extends AppCompatActivity implements SeekBar.OnSeekBarCh
                 return false;
             }
         });
-//        MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//                return false;
-//            }
-//        };
+
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.btn_search), new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        SongsTab songsTab = new SongsTab();
+                        songsTab.searchviewClose(MainScreen.this);
+                        return true;
+                    }
+                });
+
         return true;
     }
 
@@ -152,27 +150,6 @@ public class MainScreen extends AppCompatActivity implements SeekBar.OnSeekBarCh
         return true;
     }
 
-    public void playSong(Song song) {
-        Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
-        try {
-            sMediaPlayer.reset();
-            sMediaPlayer.setDataSource(contentUri.toString());
-            sMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-            sMediaPlayer.prepare();
-            sMediaPlayer.setOnCompletionListener(this);
-            sMediaPlayer.setOnPreparedListener(this);
-            sMediaPlayer.setOnSeekCompleteListener(this);
-            sMediaPlayer.start();
-
-            sTvSongName.setText(song.getTitle());
-            sTvArtist.setText(song.getArtist());
-
-            sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -189,19 +166,39 @@ public class MainScreen extends AppCompatActivity implements SeekBar.OnSeekBarCh
 
     }
 
+    //get current position and duration from PlayingMusicControl to update Seekbar
+    public void getProgressChanged(int progress, int duration) {
+        sSongProgressBar.setProgress(progress);
+        currentDuration = duration;
+        currentPosition = progress;
+    }
+
+    public void startPlayingASong(Song song) {
+        isPlaying = true;
+        sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
+
+        tvSongName.setText(song.getTitle());
+        tvArtist.setText(song.getArtist());
+    }
+
+    public void playPauseSongMethod() {
+        if(isPlaying){
+            sImgBtnPlay.setImageResource(R.drawable.ic_media_play);
+            isPlaying = false;
+        }
+        else{
+            sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
+            isPlaying = true;
+        }
+    }
+
     class playPauseSong implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if(sMediaPlayer.isPlaying()){
-                sMediaPlayer.pause();
-                sImgBtnPlay.setImageResource(R.drawable.ic_media_play);
-            }
-            else{
-                if(sMediaPlayer != null){
-                    sMediaPlayer.start();
-                    sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
-                }
-            }
+            PlayingMusicControl playingMusicControl = new PlayingMusicControl();
+            playingMusicControl.playPauseSong();
+            playPauseSongMethod();
         }
     }
+
 }

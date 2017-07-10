@@ -1,8 +1,11 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,8 +27,8 @@ import android.widget.Toast;
 public class SongsTab extends Fragment {
     private final static int PERMISSION_READ_EXTERNAL_STORAGE = 1;
     private static boolean permissionResult;
-    private ArrayList<Song> mSongList;
-    private ListView mSongListView;
+    private static ArrayList<Song> mSongList;
+    private static ListView mSongListView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -49,8 +52,7 @@ public class SongsTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Song song = mSongList.get(position);
-                MainScreen mainScreen = new MainScreen();
-                mainScreen.playSong(song);
+                createIntent(view.getContext(), song);
             }
         });
 
@@ -92,5 +94,55 @@ public class SongsTab extends Fragment {
             while (musicCursor.moveToNext());
         }
     }
+
+    public void searchSong(final MainScreen mainScreen, String keyword) {
+        final ArrayList<Song> searchSongList = new ArrayList<Song>();
+        for (Song song : mSongList){
+            if (song.getTitle().toLowerCase().contains(keyword.toLowerCase())){
+                searchSongList.add(song);
+            }
+        }
+        if(searchSongList.size() != 0){
+            SongAdapter songAdapter = new SongAdapter(mainScreen, searchSongList);
+            mSongListView.setAdapter(null);
+            mSongListView.setAdapter(songAdapter);
+
+            mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Song song = searchSongList.get(position);
+                    createIntent(getActivity(), song);
+
+                }
+            });
+        }
+        else{
+            Toast.makeText(mainScreen, "No Result !", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void searchviewClose(final MainScreen mainScreen) {
+        SongAdapter songAdapter = new SongAdapter(mainScreen, mSongList);
+        mSongListView.setAdapter(null);
+        mSongListView.setAdapter(songAdapter);
+
+        mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Song song = mSongList.get(position);
+                createIntent(getActivity(), song);
+            }
+        });
+    }
+
+    private void createIntent(Context context, Song song){
+        Intent playingMusicControl = new Intent(context, PlayingMusicControl.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("currentSong",song);
+        bundle.putParcelableArrayList("songList", mSongList);
+        playingMusicControl.putExtras(bundle);
+        startActivity(playingMusicControl);
+    }
+
 }
 

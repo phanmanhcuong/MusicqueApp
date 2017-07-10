@@ -5,4 +5,5 @@
     <string name="string_songs">Songs</string>
     <string name="string_albums">Albums</string>
     <string name="string_artists">Artists</string>
+    <string name="tv_songName" />
 </resources>

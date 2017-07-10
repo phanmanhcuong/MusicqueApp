@@ -22,12 +22,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tablayout"
-        android:layout_above="@+id/rl_in_music_control_process">
+        android:layout_above="@+id/rl_song_process">
     </android.support.v4.view.ViewPager>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_in_music_control_process"
+        android:id="@+id/rl_song_process"
         android:background="@color/colorGreen"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"

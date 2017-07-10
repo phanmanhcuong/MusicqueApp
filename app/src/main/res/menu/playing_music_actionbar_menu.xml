@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/tv_songname"
+        app:showAsAction="always"
+        android:title="@string/tv_songName"/>
+    <item
+        android:id="@+id/btn_search"
+        android:title="@string/btn_search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/btn_menu"
+        android:title="@string/btn_menu"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        app:showAsAction="always" />
+</menu>
