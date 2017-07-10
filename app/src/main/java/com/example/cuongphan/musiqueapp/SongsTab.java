@@ -51,8 +51,7 @@ public class SongsTab extends Fragment {
         mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Song song = mSongList.get(position);
-                createIntent(view.getContext(), song);
+                createIntent(view.getContext(), position);
             }
         });
 
@@ -110,9 +109,7 @@ public class SongsTab extends Fragment {
             mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Song song = searchSongList.get(position);
-                    createIntent(getActivity(), song);
-
+                    createIntent(getActivity(), position);
                 }
             });
         }
@@ -129,16 +126,15 @@ public class SongsTab extends Fragment {
         mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Song song = mSongList.get(position);
-                createIntent(getActivity(), song);
+                createIntent(getActivity(), position);
             }
         });
     }
 
-    private void createIntent(Context context, Song song){
+    private void createIntent(Context context, int position){
         Intent playingMusicControl = new Intent(context, PlayingMusicControl.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelable("currentSong",song);
+        bundle.putInt("currentSongIndex", position);
         bundle.putParcelableArrayList("songList", mSongList);
         playingMusicControl.putExtras(bundle);
         startActivity(playingMusicControl);
