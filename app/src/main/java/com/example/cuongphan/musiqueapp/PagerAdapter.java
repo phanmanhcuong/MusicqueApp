@@ -17,19 +17,16 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+         switch (position){
             case 0 :
                 SongsTab songsTab = new SongsTab();
                 return songsTab;
-
             case 1:
                 AlbumsTab albumsTab = new AlbumsTab();
                 return albumsTab;
-
             case 2:
                 ArtistsTab artistsTab = new ArtistsTab();
                 return artistsTab;
-
             default:
                 return null;
         }

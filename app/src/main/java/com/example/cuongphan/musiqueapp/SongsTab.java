@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import java.util.ArrayList;
+
 import android.Manifest;
 import android.widget.Toast;
 
@@ -27,25 +28,25 @@ import android.widget.Toast;
 public class SongsTab extends Fragment {
     private final static int PERMISSION_READ_EXTERNAL_STORAGE = 1;
     private static boolean permissionResult;
-    private static ArrayList<Song> mSongList;
+    private static ArrayList<Song> sSongList;
     private static ListView mSongListView;
+    private static ArrayList<Song> sSongListSwap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        mSongList = new ArrayList<Song>();
+        sSongList = new ArrayList<Song>();
 
         View view = inflater.inflate(R.layout.tab_songs, container, false);
         mSongListView = (ListView) view.findViewById(R.id.lv_songs);
 
         checkReadExternalStoragePermission();
-        if(permissionResult){
+        if (permissionResult) {
             getSongList();
-        }
-        else{
+        } else {
             Toast.makeText(getContext(), "READ EXTERNAL STORAGE PERMISSION DENIED !", Toast.LENGTH_LONG).show();
             System.exit(1);
         }
-        SongAdapter songAdapter = new SongAdapter(this.getActivity(), mSongList);
+        SongAdapter songAdapter = new SongAdapter(this.getActivity(), sSongList);
         mSongListView.setAdapter(songAdapter);
 
         mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -55,6 +56,7 @@ public class SongsTab extends Fragment {
             }
         });
 
+        sSongListSwap = new ArrayList<>();
         return view;
     }
 
@@ -66,11 +68,10 @@ public class SongsTab extends Fragment {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(requestCode == PERMISSION_READ_EXTERNAL_STORAGE){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permissionResult = true;
             }
         }
@@ -80,6 +81,7 @@ public class SongsTab extends Fragment {
         ContentResolver musicResolver = getActivity().getApplicationContext().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        sSongList.clear();
         if (musicCursor != null && musicCursor.moveToFirst()) {
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -88,57 +90,60 @@ public class SongsTab extends Fragment {
                 long id = musicCursor.getLong(idColumn);
                 String title = musicCursor.getString(titleColumn);
                 String artist = musicCursor.getString(artistColumn);
-                mSongList.add(new Song(id, title, artist));
-            }
-            while (musicCursor.moveToNext());
+                sSongList.add(new Song(id, title, artist));
+            } while (musicCursor.moveToNext());
         }
     }
 
     public void searchSong(final MainScreen mainScreen, String keyword) {
         final ArrayList<Song> searchSongList = new ArrayList<Song>();
-        for (Song song : mSongList){
-            if (song.getTitle().toLowerCase().contains(keyword.toLowerCase())){
+        for (Song song : sSongList) {
+            if (song.getTitle().toLowerCase().contains(keyword.toLowerCase())) {
                 searchSongList.add(song);
             }
         }
-        if(searchSongList.size() != 0){
-            SongAdapter songAdapter = new SongAdapter(mainScreen, searchSongList);
+        if (searchSongList.size() != 0) {
+            sSongListSwap = new ArrayList<>(sSongList);
+            sSongList.clear();
+            sSongList = new ArrayList<>(searchSongList);
+            SongAdapter songAdapter = new SongAdapter(mainScreen, sSongList);
             mSongListView.setAdapter(null);
             mSongListView.setAdapter(songAdapter);
-
             mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    createIntent(getActivity(), position);
+                    createIntent(view.getContext(), position);
                 }
             });
-        }
-        else{
+        } else {
             Toast.makeText(mainScreen, "No Result !", Toast.LENGTH_LONG).show();
         }
     }
 
     public void searchviewClose(final MainScreen mainScreen) {
-        SongAdapter songAdapter = new SongAdapter(mainScreen, mSongList);
+        if (sSongListSwap.size() != 0) {
+            sSongList.clear();
+            sSongList = new ArrayList<>(sSongListSwap);
+        }
+        SongAdapter songAdapter = new SongAdapter(mainScreen, sSongList);
         mSongListView.setAdapter(null);
         mSongListView.setAdapter(songAdapter);
-
         mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                createIntent(getActivity(), position);
+                createIntent(view.getContext(), position);
             }
         });
+        sSongListSwap.clear();
     }
 
-    private void createIntent(Context context, int position){
+    private void createIntent(Context context, int position) {
         Intent playingMusicControl = new Intent(context, PlayingMusicControl.class);
         Bundle bundle = new Bundle();
         bundle.putInt("currentSongIndex", position);
-        bundle.putParcelableArrayList("songList", mSongList);
+        bundle.putParcelableArrayList("songList", sSongList);
         playingMusicControl.putExtras(bundle);
         startActivity(playingMusicControl);
     }
-
 }
 

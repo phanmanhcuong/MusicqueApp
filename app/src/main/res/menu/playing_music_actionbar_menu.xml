@@ -2,14 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/tv_songname"
-        app:showAsAction="always"
-        android:title="@string/tv_songName"/>
-    <item
         android:id="@+id/btn_search"
         android:title="@string/btn_search"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
     <item
         android:id="@+id/btn_menu"
         android:title="@string/btn_menu"

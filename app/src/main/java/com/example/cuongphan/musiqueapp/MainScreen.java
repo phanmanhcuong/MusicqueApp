@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -18,7 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
+public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
+    private ViewPager viewPager;
     public static SeekBar sSongProgressBar;
     private static ImageButton sImgBtnPlay;
     private static int currentDuration;
@@ -28,6 +30,7 @@ public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnComp
     private static TextView tvArtist;
 
     Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +49,7 @@ public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnComp
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         //initialize viewpager
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         final PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -74,25 +77,24 @@ public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnComp
         //update seekbar
         mHandler.postDelayed(updateSeekBar, 100);
 
-        sImgBtnPlay = (ImageButton)findViewById(R.id.imgbtn_play);
+        sImgBtnPlay = (ImageButton) findViewById(R.id.imgbtn_play);
         sImgBtnPlay.setOnClickListener(new playPauseSong());
 
-        tvArtist = (TextView)findViewById(R.id.tv_artist);
-        tvSongName = (TextView)findViewById(R.id.tv_songname);
+        tvArtist = (TextView) findViewById(R.id.tv_artist);
+        tvSongName = (TextView) findViewById(R.id.tv_songname);
 
-        RelativeLayout rl_song_process = (RelativeLayout)findViewById(R.id.rl_song_process);
+        RelativeLayout rl_song_process = (RelativeLayout) findViewById(R.id.rl_song_process);
         rl_song_process.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainScreen.this, PlayingMusicControl.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
         });
     }
 
-    private  Runnable updateSeekBar = new Runnable() {
+    private Runnable updateSeekBar = new Runnable() {
         @Override
         public void run() {
             sSongProgressBar.setMax(currentDuration);
@@ -102,15 +104,21 @@ public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnComp
     };
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainscreen_actionbar_menu, menu);
-
         final SearchView searchView = (SearchView) menu.findItem(R.id.btn_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String keyword) {
-                SongsTab songsTab = new SongsTab();
-                songsTab.searchSong(MainScreen.this, keyword);
+                Fragment currentTab = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+                if (viewPager.getCurrentItem() == 0) {
+                    SongsTab songsTab = (SongsTab) currentTab;
+                    songsTab.searchSong(MainScreen.this, keyword);
+                } else if (viewPager.getCurrentItem() == 1) {
+
+                } else {
+
+                }
                 //close keyboard
                 searchView.clearFocus();
                 return true;
@@ -123,28 +131,34 @@ public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnComp
         });
 
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.btn_search), new MenuItemCompat.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem item) {
-                        return true;
-                    }
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
 
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem item) {
-                        SongsTab songsTab = new SongsTab();
-                        songsTab.searchviewClose(MainScreen.this);
-                        return true;
-                    }
-                });
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Fragment currentTab = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+                if (viewPager.getCurrentItem() == 0) {
+                    SongsTab songsTab = (SongsTab) currentTab;
+                    songsTab.searchviewClose(MainScreen.this);
+                } else if (viewPager.getCurrentItem() == 1) {
+
+                } else {
+
+                }
+                return true;
+            }
+        });
 
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if (item.getItemId() == R.id.btn_menu){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.btn_menu) {
 
-        }
-        else if(item.getItemId() == R.id.btn_search){
+        } else if (item.getItemId() == R.id.btn_search) {
 
         }
         return true;
@@ -182,11 +196,10 @@ public class MainScreen extends AppCompatActivity implements  MediaPlayer.OnComp
     }
 
     public void playPauseSongMethod() {
-        if(isPlaying){
+        if (isPlaying) {
             sImgBtnPlay.setImageResource(R.drawable.ic_media_play);
             isPlaying = false;
-        }
-        else{
+        } else {
             sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
             isPlaying = true;
         }
