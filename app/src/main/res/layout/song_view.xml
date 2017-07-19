@@ -3,7 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rl_songview">
+    android:id="@+id/rl_songview"
+    android:paddingBottom="@dimen/gv_padding_bottom"
+    android:paddingTop="@dimen/gv_padding_bottom"
+    android:paddingLeft="@dimen/gv_padding_left">
 
     <ImageView
         android:id="@+id/imageView3"
@@ -21,7 +24,8 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/imageView3"
         android:layout_toRightOf="@+id/imageView3"
-        android:text="TextView" />
+        android:text="TextView"
+        android:maxLines="2"/>
 
     <TextView
         android:id="@+id/tv_artist"
@@ -32,4 +36,9 @@
         android:layout_toEndOf="@+id/imageView3"
         android:layout_toRightOf="@+id/imageView3"
         android:text="TextView" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gv_bottom_line"
+        android:background="@color/colorGray"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

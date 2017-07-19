@@ -119,12 +119,12 @@
             app:srcCompat="@android:drawable/ic_media_next" />
 
     </RelativeLayout>
-    <ListView
+    <GridView
         android:id="@+id/lv_playing_music"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:choiceMode="singleChoice"
         android:listSelector="@color/colorGreen">
-    </ListView>
+    </GridView>
 </LinearLayout>

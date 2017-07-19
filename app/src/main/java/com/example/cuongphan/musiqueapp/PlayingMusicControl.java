@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -40,7 +41,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
     private static ArrayList<Song> sSwapSongList;
     private static Song sCurrentSong;
     private static int sCurrentSongIndex;
-    private ListView songListView;
+    private GridView songListView;
     private TextView tv_songname;
     private TextView tv_artist;
     private TextView tv_duration;
@@ -78,7 +79,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         Bundle songInformation = intent.getExtras();
 
         //check if intent started from main screen's list song clicked or music control process clicked
-        songListView = (ListView) findViewById(R.id.lv_playing_music);
+        songListView = (GridView) findViewById(R.id.lv_playing_music);
         if (songInformation != null || sCurrentSong != null) {
             if (songInformation != null) {
                 sSongList = songInformation.getParcelableArrayList("songList");
@@ -234,7 +235,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //onBackPressed();
                 Intent intent = new Intent(this, MainScreen.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);

@@ -6,4 +6,6 @@
     <string name="string_albums">Albums</string>
     <string name="string_artists">Artists</string>
     <string name="tv_songName" />
+    <string name="listview_string">Listview</string>
+    <string name="gridview_string">Gridview</string>
 </resources>

@@ -28,14 +28,14 @@ public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompl
     private static boolean isPlaying;
     private static TextView tvSongName;
     private static TextView tvArtist;
-
+    private boolean isListView;
     Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_screen);
-
+        isListView = true;
         //add actionbar
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
@@ -156,10 +156,38 @@ public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.btn_menu) {
+        int i = 0;
+        switch (item.getItemId()){
+            case R.id.btn_menu:
 
-        } else if (item.getItemId() == R.id.btn_search) {
+                break;
+            case R.id.btn_search:
 
+                break;
+            case R.id.menu_listview:
+                //now is gridview
+                if (!isListView) {
+                    isListView = true;
+                    Fragment currentTab = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+                    if (viewPager.getCurrentItem() == 0) {
+                        SongsTab songsTab = (SongsTab) currentTab;
+                        songsTab.changeGridView(1);
+                    }
+                }
+                break;
+            case R.id.menu_gridview:
+                //now is listview
+                if(isListView){
+                    isListView = false;
+                    Fragment currentTab = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+                    if (viewPager.getCurrentItem() == 0) {
+                        SongsTab songsTab = (SongsTab) currentTab;
+                        songsTab.changeGridView(2);
+                    }
+                }
+                break;
+            default:
+                break;
         }
         return true;
     }
@@ -181,6 +209,7 @@ public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompl
     }
 
     //get current position and duration from PlayingMusicControl to update Seekbar
+
     public void getProgressChanged(int progress, int duration) {
         sSongProgressBar.setProgress(progress);
         currentDuration = duration;

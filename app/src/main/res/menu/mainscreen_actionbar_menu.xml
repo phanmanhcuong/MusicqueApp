@@ -11,6 +11,15 @@
         android:id="@+id/btn_menu"
         android:title="@string/btn_menu"
         android:icon="@drawable/ic_more_vert_black_24dp"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" >
+        <menu>
+            <item
+                android:id="@+id/menu_listview"
+                android:title="@string/listview_string"/>
+            <item
+                android:id="@+id/menu_gridview"
+                android:title="@string/gridview_string"/>
+        </menu>
+    </item>
 
 </menu>

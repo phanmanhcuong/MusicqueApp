@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,7 @@ public class SongsTab extends Fragment {
     private final static int PERMISSION_READ_EXTERNAL_STORAGE = 1;
     private static boolean permissionResult;
     private static ArrayList<Song> sSongList;
-    private static ListView mSongListView;
+    private static GridView mSongGridView;
     private static ArrayList<Song> sSongListSwap;
 
     @Override
@@ -37,8 +37,12 @@ public class SongsTab extends Fragment {
         sSongList = new ArrayList<Song>();
 
         View view = inflater.inflate(R.layout.tab_songs, container, false);
-        mSongListView = (ListView) view.findViewById(R.id.lv_songs);
+        mSongGridView = (GridView) view.findViewById(R.id.lv_songs);
 
+//        MainScreen mainScreen = new MainScreen();
+//        if(!mainScreen.isListView()){
+//            mSongGridView.setNumColumns(2);
+//        }
         checkReadExternalStoragePermission();
         if (permissionResult) {
             getSongList();
@@ -47,9 +51,9 @@ public class SongsTab extends Fragment {
             System.exit(1);
         }
         SongAdapter songAdapter = new SongAdapter(this.getActivity(), sSongList);
-        mSongListView.setAdapter(songAdapter);
+        mSongGridView.setAdapter(songAdapter);
 
-        mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSongGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 createIntent(view.getContext(), position);
@@ -107,9 +111,9 @@ public class SongsTab extends Fragment {
             sSongList.clear();
             sSongList = new ArrayList<>(searchSongList);
             SongAdapter songAdapter = new SongAdapter(mainScreen, sSongList);
-            mSongListView.setAdapter(null);
-            mSongListView.setAdapter(songAdapter);
-            mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            mSongGridView.setAdapter(null);
+            mSongGridView.setAdapter(songAdapter);
+            mSongGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     createIntent(view.getContext(), position);
@@ -126,9 +130,9 @@ public class SongsTab extends Fragment {
             sSongList = new ArrayList<>(sSongListSwap);
         }
         SongAdapter songAdapter = new SongAdapter(mainScreen, sSongList);
-        mSongListView.setAdapter(null);
-        mSongListView.setAdapter(songAdapter);
-        mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSongGridView.setAdapter(null);
+        mSongGridView.setAdapter(songAdapter);
+        mSongGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 createIntent(view.getContext(), position);
@@ -144,6 +148,11 @@ public class SongsTab extends Fragment {
         bundle.putParcelableArrayList("songList", sSongList);
         playingMusicControl.putExtras(bundle);
         startActivity(playingMusicControl);
+    }
+
+    public void changeGridView(int columnNumber) {
+        mSongGridView.setNumColumns(columnNumber);
+
     }
 }
 
