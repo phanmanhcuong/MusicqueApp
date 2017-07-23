@@ -42,6 +42,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
     private static Song sCurrentSong;
     private static int sCurrentSongIndex;
     private GridView songListView;
+    private static SongAdapter sSongAdapter;
     private TextView tv_songname;
     private TextView tv_artist;
     private TextView tv_duration;
@@ -60,8 +61,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         sSongProgressBar = (SeekBar) findViewById(R.id.seekBar_song_process);
-        //sSongProgressBar.setProgress(0);
-        //sSongProgressBar.setMax(100);
 
         //update seekbar
         sSongProgressBar.setOnSeekBarChangeListener(this);
@@ -88,8 +87,8 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
                 playSong(sCurrentSong);
             }
 
-            SongAdapter songAdapter = new SongAdapter(this, sSongList);
-            songListView.setAdapter(songAdapter);
+            sSongAdapter = new SongAdapter(this, sSongList);
+            songListView.setAdapter(sSongAdapter);
             songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -161,8 +160,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.playing_music_actionbar_menu, menu);
-
-
         final SearchView searchView = (SearchView)menu.findItem(R.id.btn_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -177,9 +174,9 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
                     sSwapSongList = new ArrayList<Song>(sSongList);
                     sSongList.clear();
                     sSongList = new ArrayList<Song>(searchSongList);
-                    SongAdapter songAdapter = new SongAdapter(PlayingMusicControl.this, sSongList);
+                    sSongAdapter = new SongAdapter(PlayingMusicControl.this, sSongList);
                     songListView.setAdapter(null);
-                    songListView.setAdapter(songAdapter);
+                    songListView.setAdapter(sSongAdapter);
                     songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -238,8 +235,20 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
                 Intent intent = new Intent(this, MainScreen.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                return true;
+                break;
             case R.id.btn_search:
+
+                break;
+            case R.id.btn_menu:
+                Intent playingQueueIntent = new Intent(getApplicationContext(), PlayingQueue.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("songName", sCurrentSong.getTitle());
+                bundle.putString("Artist", sCurrentSong.getArtist());
+                bundle.putParcelableArrayList("songList", sSongList);
+                playingQueueIntent.putExtras(bundle);
+                playingQueueIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(playingQueueIntent);
+                break;
 
         }
         return true;
@@ -323,6 +332,17 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
                 sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
             }
         }
+    }
+
+    public void moveDropSongs(int movedSongPosition, int position) {
+        Song movedSong = sSongList.get(movedSongPosition);
+        sSongList.remove(movedSongPosition);
+        if(movedSongPosition > position){
+            sSongList.add(position+1, movedSong);
+        } else{
+            sSongList.add(position, movedSong);
+        }
+        sSongAdapter.notifyDataSetChanged();
     }
 
 

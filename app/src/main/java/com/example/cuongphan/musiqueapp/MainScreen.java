@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
+public class MainScreen extends AppCompatActivity   {
     private ViewPager viewPager;
     public static SeekBar sSongProgressBar;
     private static ImageButton sImgBtnPlay;
@@ -192,24 +192,7 @@ public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompl
         return true;
     }
 
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-
-    }
-
-    @Override
-    public void onSeekComplete(MediaPlayer mp) {
-
-    }
-
     //get current position and duration from PlayingMusicControl to update Seekbar
-
     public void getProgressChanged(int progress, int duration) {
         sSongProgressBar.setProgress(progress);
         currentDuration = duration;
@@ -243,4 +226,15 @@ public class MainScreen extends AppCompatActivity implements MediaPlayer.OnCompl
         }
     }
 
+    public static int getCurrentDuration() {
+        return currentDuration;
+    }
+
+    public static int getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public static boolean isPlaying() {
+        return isPlaying;
+    }
 }
