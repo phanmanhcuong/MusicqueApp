@@ -5,6 +5,9 @@
     <string name="string_songs">Songs</string>
     <string name="string_albums">Albums</string>
     <string name="string_artists">Artists</string>
+    <string name="song_name">songName</string>
+    <string name="song_list">songList</string>
+    <string name="artist">artist</string>
     <string name="tv_songName" />
     <string name="listview_string">Listview</string>
     <string name="gridview_string">Gridview</string>

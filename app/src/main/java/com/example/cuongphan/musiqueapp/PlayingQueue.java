@@ -42,7 +42,7 @@ public class PlayingQueue extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         lv_songList = (ListView)findViewById(R.id.lv_songs);
-        sSongList = bundle.getParcelableArrayList("songList");
+        sSongList = bundle.getParcelableArrayList(String.valueOf(R.string.song_list));
         sSongAdapter = new SongAdapterPlayingQueue(this, sSongList);
         lv_songList.setAdapter(sSongAdapter);
 
@@ -53,8 +53,8 @@ public class PlayingQueue extends AppCompatActivity {
         //set text for textview song and artist;
         TextView tv_songname = (TextView)findViewById(R.id.tv_songname);
         TextView tv_artist = (TextView)findViewById(R.id.tv_artist);
-        tv_songname.setText(bundle.getString("songName"));
-        tv_artist.setText(bundle.getString("Artist"));
+        tv_songname.setText(bundle.getString(String.valueOf(R.string.song_name)));
+        tv_artist.setText(bundle.getString(String.valueOf(R.string.artist)));
 
         //update play pause button
         isPlaying = mMainScreen.isPlaying();

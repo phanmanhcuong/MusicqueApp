@@ -43,15 +43,17 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
     private static int sCurrentSongIndex;
     private GridView songListView;
     private static SongAdapter sSongAdapter;
-    private TextView tv_songname;
-    private TextView tv_artist;
-    private TextView tv_duration;
     private TextView tv_current_position;
     Handler mHandler = new Handler();
     public MainScreen sMainScreen;
     private static boolean isRepeat;
     private static boolean isShuffle;
-
+    private static final String STARTFOREGROUND_ACTION = "startforeground";
+    private static final String NOTIFICATION_CLICKED_ACTION = "playing_music_control";
+    private static final String PLAY_ACTION = "play_song";
+    private static final String PAUSE_ACTION = "pause_song";
+    private static final String PREV_ACTION = "previous_song";
+    private static final String NEXT_ACTION = "next_song";
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +83,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         songListView = (GridView) findViewById(R.id.lv_playing_music);
         if (songInformation != null || sCurrentSong != null) {
             if (songInformation != null) {
-                sSongList = songInformation.getParcelableArrayList("songList");
+                sSongList = songInformation.getParcelableArrayList(String.valueOf(R.string.song_list));
                 sCurrentSongIndex = songInformation.getInt("currentSongIndex");
                 sCurrentSong = sSongList.get(sCurrentSongIndex);
                 playSong(sCurrentSong);
@@ -116,6 +118,13 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
 
         ImageButton imgbtn_next_song = (ImageButton) findViewById(R.id.imgbtn_next_song);
         imgbtn_next_song.setOnClickListener(new handleImageButtonsOnClick(imgbtn_next_song, R.id.imgbtn_next_song));
+
+
+        Intent songNotification = new Intent(PlayingMusicControl.this, PlayingSongNotification.class);
+        songNotification.setAction(STARTFOREGROUND_ACTION);
+        songNotification.putExtra(String.valueOf(R.string.song_name), sCurrentSong.getTitle());
+        songNotification.putExtra(String.valueOf(R.string.artist), sCurrentSong.getArtist());
+        startService(songNotification);
 
         tv_current_position = (TextView) findViewById(R.id.tv_current_position);
         sSwapSongList = new ArrayList<>();
@@ -242,9 +251,9 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
             case R.id.btn_menu:
                 Intent playingQueueIntent = new Intent(getApplicationContext(), PlayingQueue.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("songName", sCurrentSong.getTitle());
-                bundle.putString("Artist", sCurrentSong.getArtist());
-                bundle.putParcelableArrayList("songList", sSongList);
+                bundle.putString(String.valueOf(R.string.song_name), sCurrentSong.getTitle());
+                bundle.putString(String.valueOf(R.string.artist), sCurrentSong.getArtist());
+                bundle.putParcelableArrayList(String.valueOf(R.string.song_list), sSongList);
                 playingQueueIntent.putExtras(bundle);
                 playingQueueIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(playingQueueIntent);
@@ -274,9 +283,9 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
             sMediaPlayer.prepare();
             sMediaPlayer.start();
 
-            tv_songname = (TextView) findViewById(R.id.tv_songname);
-            tv_artist = (TextView) findViewById(R.id.tv_artist);
-            tv_duration = (TextView) findViewById(R.id.tv_duration);
+            TextView tv_songname = (TextView) findViewById(R.id.tv_songname);
+            TextView tv_artist = (TextView) findViewById(R.id.tv_artist);
+            TextView tv_duration = (TextView) findViewById(R.id.tv_duration);
 
             tv_songname.setText(sCurrentSong.getTitle());
             tv_artist.setText(sCurrentSong.getArtist());
@@ -321,6 +330,36 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         }
     }
 
+
+    public void notificationActionHandle(String action) {
+        switch (action){
+            case PREV_ACTION:
+                if (sCurrentSongIndex == 0) {
+                    sCurrentSongIndex = sSongList.size() - 1;
+                } else {
+                    sCurrentSongIndex += -1;
+                }
+                sCurrentSong = sSongList.get(sCurrentSongIndex);
+                playSong(sCurrentSong);
+                break;
+            case NEXT_ACTION:
+                if (sCurrentSongIndex == (sSongList.size() - 1)) {
+                    sCurrentSongIndex = 0;
+                } else {
+                    sCurrentSongIndex += 1;
+                }
+                sCurrentSong = sSongList.get(sCurrentSongIndex);
+                playSong(sCurrentSong);
+                break;
+            case PAUSE_ACTION:
+                playPauseSong();
+                break;
+            case  PLAY_ACTION:
+                playPauseSong();
+                break;
+        }
+    }
+
     //play or pause playing music
     public void playPauseSong() {
         if (sMediaPlayer.isPlaying()) {
@@ -344,6 +383,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         }
         sSongAdapter.notifyDataSetChanged();
     }
+
 
 
     private class handleImageButtonsOnClick implements View.OnClickListener {

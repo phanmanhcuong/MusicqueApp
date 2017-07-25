@@ -39,10 +39,6 @@ public class SongsTab extends Fragment {
         View view = inflater.inflate(R.layout.tab_songs, container, false);
         mSongGridView = (GridView) view.findViewById(R.id.lv_songs);
 
-//        MainScreen mainScreen = new MainScreen();
-//        if(!mainScreen.isListView()){
-//            mSongGridView.setNumColumns(2);
-//        }
         checkReadExternalStoragePermission();
         if (permissionResult) {
             getSongList();
@@ -145,14 +141,13 @@ public class SongsTab extends Fragment {
         Intent playingMusicControl = new Intent(context, PlayingMusicControl.class);
         Bundle bundle = new Bundle();
         bundle.putInt("currentSongIndex", position);
-        bundle.putParcelableArrayList("songList", sSongList);
+        bundle.putParcelableArrayList(String.valueOf(R.string.song_list), sSongList);
         playingMusicControl.putExtras(bundle);
         startActivity(playingMusicControl);
     }
 
     public void changeGridView(int columnNumber) {
         mSongGridView.setNumColumns(columnNumber);
-
     }
 }
 
