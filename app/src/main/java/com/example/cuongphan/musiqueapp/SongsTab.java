@@ -31,6 +31,7 @@ public class SongsTab extends Fragment {
     private static ArrayList<Song> sSongList;
     private static GridView mSongGridView;
     private static ArrayList<Song> sSongListSwap;
+    private static final String STARTFOREGROUND_ACTION = "startforeground";
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -138,6 +139,14 @@ public class SongsTab extends Fragment {
     }
 
     private void createIntent(Context context, int position) {
+        //initialize notification when click a song in songtab list
+        Intent songNotification = new Intent(context, PlayingSongNotification.class);
+        songNotification.setAction(STARTFOREGROUND_ACTION);
+        Song currentSong = sSongList.get(position);
+        songNotification.putExtra(String.valueOf(R.string.song_name), currentSong.getTitle());
+        songNotification.putExtra(String.valueOf(R.string.artist), currentSong.getArtist());
+        context.startService(songNotification);
+
         Intent playingMusicControl = new Intent(context, PlayingMusicControl.class);
         Bundle bundle = new Bundle();
         bundle.putInt("currentSongIndex", position);

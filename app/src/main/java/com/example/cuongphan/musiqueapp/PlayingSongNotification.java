@@ -1,8 +1,10 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -23,7 +25,10 @@ public class PlayingSongNotification extends Service{
     private static final int  NOTIFICATION_ID_FOREGROUND_SERVICE = 100;
     private String songName;
     private String artist;
-
+    private static RemoteViews remoteBigViews;
+    private static RemoteViews remoteSmallViews;
+    private static Notification notification;
+    private static NotificationManager notificationManager;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,8 +63,8 @@ public class PlayingSongNotification extends Service{
     }
 
     private void showNotification() {
-        RemoteViews remoteBigViews = new RemoteViews(getPackageName(), R.layout.playing_song_notification_bigview);
-        RemoteViews remoteSmallViews = new RemoteViews(getPackageName(), R.layout.playing_song_notification_smallview);
+        remoteBigViews = new RemoteViews(getPackageName(), R.layout.playing_song_notification_bigview);
+        remoteSmallViews = new RemoteViews(getPackageName(), R.layout.playing_song_notification_smallview);
 
         Intent notificationClickedIntent = new Intent(this, PlayingMusicControl.class);
         notificationClickedIntent.setAction(NOTIFICATION_CLICKED_ACTION);
@@ -87,8 +92,31 @@ public class PlayingSongNotification extends Service{
         remoteBigViews.setTextViewText(R.id.tv_artist, artist);
         remoteSmallViews.setTextViewText(R.id.tv_artist, artist);
 
-        Notification notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.playing_music_notification_smallview).setCustomContentView(remoteSmallViews).setCustomBigContentView(remoteBigViews).setContentIntent(notificationClickedPendingIntent).build();
+        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.playing_music_notification_smallview).setCustomContentView(remoteSmallViews).setCustomBigContentView(remoteBigViews).setContentIntent(notificationClickedPendingIntent).build();
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         startForeground(NOTIFICATION_ID_FOREGROUND_SERVICE, notification);
+    }
+
+    public void updateNotification(String title, String artist){
+        remoteBigViews.setTextViewText(R.id.tv_songname, title);
+        remoteSmallViews.setTextViewText(R.id.tv_songname, title);
+        remoteBigViews.setTextViewText(R.id.tv_artist, artist);
+        remoteSmallViews.setTextViewText(R.id.tv_artist, artist);
+
+        notificationManager.notify(NOTIFICATION_ID_FOREGROUND_SERVICE, notification);
+    }
+
+    public void updatePausePlaySong(int i) {
+        if(i == 0){
+            remoteBigViews.setImageViewResource(R.id.imgbtn_play_pause, R.drawable.ic_media_play);
+            remoteSmallViews.setImageViewResource(R.id.imgbtn_play_pause, R.drawable.ic_media_play);
+            notificationManager.notify(NOTIFICATION_ID_FOREGROUND_SERVICE, notification);
+        }
+        else{
+            remoteBigViews.setImageViewResource(R.id.imgbtn_play_pause, R.drawable.ic_media_pause);
+            remoteSmallViews.setImageViewResource(R.id.imgbtn_play_pause, R.drawable.ic_media_pause);
+            notificationManager.notify(NOTIFICATION_ID_FOREGROUND_SERVICE, notification);
+        }
     }
 }
