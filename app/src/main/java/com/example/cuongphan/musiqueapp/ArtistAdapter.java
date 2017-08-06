@@ -24,7 +24,7 @@ public class ArtistAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return 0;
+        return artists.size();
     }
 
     @Override
@@ -46,10 +46,18 @@ public class ArtistAdapter extends BaseAdapter{
         tv_artist_name.setText(currentArtist.getmName());
 
         TextView tv_album_number = (TextView)convertView.findViewById(R.id.tv_artist_albumbumber);
-        tv_album_number.setText(currentArtist.getmAlbumNumber());
+        if(currentArtist.getmAlbumNumber() == 1){
+            tv_album_number.setText(String.valueOf(currentArtist.getmAlbumNumber()) + " Album");
+        } else{
+            tv_album_number.setText(String.valueOf(currentArtist.getmAlbumNumber()) + " Albums");
+        }
 
         TextView tv_song_number = (TextView)convertView.findViewById(R.id.tv_artist_songnumber);
-        tv_song_number.setText(currentArtist.getmSongNumber());
+        if(currentArtist.getmSongNumber() == 1){
+            tv_song_number.setText(String.valueOf(currentArtist.getmSongNumber()) + " Song");
+        } else{
+            tv_song_number.setText(String.valueOf(currentArtist.getmSongNumber()) + " Songs");
+        }
         return convertView;
     }
 }

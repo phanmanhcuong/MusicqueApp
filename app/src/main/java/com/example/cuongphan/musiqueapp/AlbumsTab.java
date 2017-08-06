@@ -51,11 +51,13 @@ public class AlbumsTab extends Fragment {
             int idColumn = albumCursor.getColumnIndex(MediaStore.Audio.Albums._ID);
             int artistColumn = albumCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
             int albumNameColumn = albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
+            int albumArtColumn = albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
             do {
                 long id = albumCursor.getLong(idColumn);
                 String artist = albumCursor.getString(artistColumn);
                 String albumName = albumCursor.getString(albumNameColumn);
-                mAlbumList.add(new Album(id, albumName, artist));
+                String albumArt = albumCursor.getString(albumArtColumn);
+                mAlbumList.add(new Album(id, albumName, artist, albumArt));
             }
             while (albumCursor.moveToNext());
         }

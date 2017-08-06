@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -19,19 +20,19 @@ import java.util.ArrayList;
 
 public class ArtistsTab extends Fragment {
     private ArrayList<Artist> mArtistList;
-    private ListView mArtistListView;
+    private GridView mArtistGridView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mArtistList = new ArrayList<Artist>();
 
         View view = inflater.inflate(R.layout.tab_artists, container, false);
-        mArtistListView = (ListView)view.findViewById(R.id.lv_artist);
+        mArtistGridView = (GridView) view.findViewById(R.id.lv_artist);
 
         getArtistList();
 
         ArtistAdapter artistAdapter = new ArtistAdapter(mArtistList, this.getActivity());
-        mArtistListView.setAdapter(artistAdapter);
+        mArtistGridView.setAdapter(artistAdapter);
 
         return view;
     }

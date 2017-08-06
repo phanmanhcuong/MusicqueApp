@@ -8,11 +8,13 @@ public class Album {
     private long mId;
     private String mAlbumName;
     private String mArtist;
+    private String mAlbumArt;
 
-    public Album(long mId, String mAlbumName, String mArtist) {
+    public Album(long mId, String mAlbumName, String mArtist, String mAlbumArt) {
         this.mId = mId;
         this.mAlbumName = mAlbumName;
         this.mArtist = mArtist;
+        this.mAlbumArt = mAlbumArt;
     }
 
     public long getmId() {
@@ -37,5 +39,9 @@ public class Album {
 
     public void setmArtist(String mArtist) {
         this.mArtist = mArtist;
+    }
+
+    public String getmAlbumArt() {
+        return mAlbumArt;
     }
 }

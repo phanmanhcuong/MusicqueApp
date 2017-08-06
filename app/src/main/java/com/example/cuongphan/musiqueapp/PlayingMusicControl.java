@@ -42,6 +42,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
     public static TextView tv_songname;
     public static TextView tv_artist;
     public static TextView tv_duration;
+    private static PlayingSongNotification playingSongNotification;
     Handler mHandler = new Handler();
     public MainScreen sMainScreen;
     private static boolean isRepeat = false;
@@ -81,6 +82,9 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
 
         Intent intent = getIntent();
         Bundle songInformation = intent.getExtras();
+
+        playingSongNotification = new PlayingSongNotification();
+
 
         //check if intent started from main screen's list song clicked or music control process clicked
         songListView = (GridView) findViewById(R.id.lv_playing_music);
@@ -320,7 +324,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
 
             songListView.setSelection(sCurrentSongIndex);
 
-            PlayingSongNotification playingSongNotification = new PlayingSongNotification();
             playingSongNotification.updateNotification(sCurrentSong.getTitle(), sCurrentSong.getArtist());
 
             MainScreen mainScreen = new MainScreen();

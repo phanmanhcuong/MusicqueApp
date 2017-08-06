@@ -27,7 +27,9 @@ import android.widget.Toast;
 
 public class SongsTab extends Fragment {
     private final static int PERMISSION_READ_EXTERNAL_STORAGE = 1;
-    private static boolean permissionResult;
+    private final static int PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
+    private static boolean permissionReadResult;
+    private static boolean permissionWriteResult;
     private static ArrayList<Song> sSongList;
     private static GridView mSongGridView;
     private static ArrayList<Song> sSongListSwap;
@@ -41,7 +43,7 @@ public class SongsTab extends Fragment {
         mSongGridView = (GridView) view.findViewById(R.id.lv_songs);
 
         checkReadExternalStoragePermission();
-        if (permissionResult) {
+        if (permissionReadResult == true && permissionWriteResult == true) {
             getSongList();
         } else {
             Toast.makeText(getContext(), "READ EXTERNAL STORAGE PERMISSION DENIED !", Toast.LENGTH_LONG).show();
@@ -62,10 +64,14 @@ public class SongsTab extends Fragment {
     }
 
     private void checkReadExternalStoragePermission() {
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            permissionResult = true;
-        } else {
+        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            permissionReadResult = true;
+            permissionWriteResult = true;
+        } else if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_READ_EXTERNAL_STORAGE);
+        } else if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
         }
     }
 
@@ -73,7 +79,11 @@ public class SongsTab extends Fragment {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                permissionResult = true;
+                permissionReadResult = true;
+            }
+        } else{
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                permissionWriteResult = true;
             }
         }
     }

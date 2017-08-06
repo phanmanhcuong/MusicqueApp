@@ -1,10 +1,13 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ public class AlbumAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return 0;
+        return mAlbumList.size();
     }
 
     @Override
@@ -42,11 +45,14 @@ public class AlbumAdapter extends BaseAdapter{
         convertView = LayoutInflater.from(context).inflate(R.layout.album_view, null);
         Album currentAlbum = mAlbumList.get(position);
 
+        ImageView imgAlbumArt = (ImageView)convertView.findViewById(R.id.img_album_art);
+        imgAlbumArt.setImageDrawable(Drawable.createFromPath(currentAlbum.getmAlbumArt()));
+
         TextView tvAlbumName = (TextView)convertView.findViewById(R.id.tv_album_name);
-        tvAlbumName.setText(currentAlbum.getmAlbumName() + " Albums");
+        tvAlbumName.setText(currentAlbum.getmAlbumName());
 
         TextView tvArtist = (TextView)convertView.findViewById(R.id.tv_artist);
-        tvArtist.setText(currentAlbum.getmArtist() + " Songs");
+        tvArtist.setText(currentAlbum.getmArtist());
 
         return convertView;
     }
