@@ -29,6 +29,7 @@ public class PlayingSongNotification extends Service{
     private static RemoteViews remoteSmallViews;
     private static Notification notification;
     private static NotificationManager notificationManager;
+    private static PlayingMusicControl playingMusicControl;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -37,7 +38,7 @@ public class PlayingSongNotification extends Service{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        PlayingMusicControl playingMusicControl = new PlayingMusicControl();
+        playingMusicControl = new PlayingMusicControl();
         songName = intent.getStringExtra(String.valueOf(R.string.song_name));
         artist = intent.getStringExtra(String.valueOf(R.string.artist));
         switch (intent.getAction()){

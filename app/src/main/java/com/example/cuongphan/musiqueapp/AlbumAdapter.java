@@ -3,6 +3,7 @@ package com.example.cuongphan.musiqueapp;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,11 @@ public class AlbumAdapter extends BaseAdapter{
         Album currentAlbum = mAlbumList.get(position);
 
         ImageView imgAlbumArt = (ImageView)convertView.findViewById(R.id.img_album_art);
-        imgAlbumArt.setImageDrawable(Drawable.createFromPath(currentAlbum.getmAlbumArt()));
+        if(currentAlbum.getmAlbumArt() == null){
+            //imgAlbumArt.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.album_background));
+        } else{
+            imgAlbumArt.setImageDrawable(Drawable.createFromPath(currentAlbum.getmAlbumArt()));
+        }
 
         TextView tvAlbumName = (TextView)convertView.findViewById(R.id.tv_album_name);
         tvAlbumName.setText(currentAlbum.getmAlbumName());

@@ -1,6 +1,7 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -136,9 +137,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         @Override
         public void run() {
             int duration = sMediaPlayer.getDuration();
-            int currentProsition = sMediaPlayer.getCurrentPosition();
             sSongProgressBar.setMax(duration);
-            sSongProgressBar.setProgress(currentProsition);
 
             //update current position textview
             int current_position = sMediaPlayer.getCurrentPosition();
@@ -146,7 +145,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
             int seconds = ((current_position / 1000) - (minutes * 60));
             tv_current_position.setText(minutes + ":" + String.format("%02d", seconds));
 
-            mHandler.postDelayed(this, 100);
+            mHandler.postDelayed(this, 1000);
         }
     };
 
@@ -279,14 +278,11 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         try {
             sMediaPlayer.reset();
             sMediaPlayer.setDataSource(contentUri.toString());
+            //sMediaPlayer.setDataSource(this, contentUri);
             sMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             sMediaPlayer.setLooping(false);
             sMediaPlayer.prepare();
             sMediaPlayer.start();
-
-            //tv_songname = (TextView) findViewById(R.id.tv_songname);
-            //tv_artist = (TextView) findViewById(R.id.tv_artist);
-            //tv_duration = (TextView) findViewById(R.id.tv_duration);
 
             tv_songname.setText(sCurrentSong.getTitle());
             tv_artist.setText(sCurrentSong.getArtist());
