@@ -11,11 +11,13 @@ public class Song implements Parcelable{
     private long id;
     private String title;
     private String artist;
+    private long albumId;
 
-    public Song(long id, String title, String artist) {
+    public Song(long id, String title, String artist, long albumId) {
         this.id = id;
         this.title = title;
         this.artist = artist;
+        this.albumId = albumId;
     }
 
     protected Song(Parcel in) {
@@ -58,6 +60,10 @@ public class Song implements Parcelable{
 
     public void setArtist(String artist) {
         this.artist = artist;
+    }
+
+    public long getAlbumId() {
+        return albumId;
     }
 
     @Override

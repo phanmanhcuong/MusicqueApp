@@ -30,7 +30,7 @@ public class SongsTab extends Fragment {
     private final static int PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
     private static boolean permissionReadResult;
     private static boolean permissionWriteResult;
-    private static ArrayList<Song> sSongList;
+    public static ArrayList<Song> sSongList;
     private static GridView mSongGridView;
     private static ArrayList<Song> sSongListSwap;
     private static final String STARTFOREGROUND_ACTION = "startforeground";
@@ -97,11 +97,13 @@ public class SongsTab extends Fragment {
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int albumIdColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
             do {
                 long id = musicCursor.getLong(idColumn);
                 String title = musicCursor.getString(titleColumn);
                 String artist = musicCursor.getString(artistColumn);
-                sSongList.add(new Song(id, title, artist));
+                long albumId = musicCursor.getLong(albumIdColumn);
+                sSongList.add(new Song(id, title, artist, albumId));
             } while (musicCursor.moveToNext());
         }
     }

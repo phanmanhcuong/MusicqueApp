@@ -11,4 +11,7 @@
     <string name="tv_songName" />
     <string name="listview_string">Listview</string>
     <string name="gridview_string">Gridview</string>
+    <string name="album_songs">albumSongs</string>
+    <string name="album_name">albumName</string>
+    <string name="album_art">albumArt</string>
 </resources>

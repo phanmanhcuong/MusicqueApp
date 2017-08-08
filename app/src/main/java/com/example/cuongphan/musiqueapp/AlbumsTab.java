@@ -1,6 +1,7 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,11 +37,29 @@ public class AlbumsTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Album album = mAlbumList.get(position);
-                MainScreen mainScreen = new MainScreen();
+                Intent songsInAnAlbum = new Intent(view.getContext(), SongsInAnAlbum.class);
+                ArrayList<Song> songsOfAlbum = getSongsInAlbum(album);
+                Bundle bundle = new Bundle();
+                bundle.putString(String.valueOf(R.string.album_name), album.getmAlbumName());
+                bundle.putString(String.valueOf(R.string.artist), album.getmArtist());
+                bundle.putString(String.valueOf(R.string.album_art), album.getmAlbumArt());
+                bundle.putParcelableArrayList(String.valueOf(R.string.album_songs), songsOfAlbum);
+                songsInAnAlbum.putExtras(bundle);
+                startActivity(songsInAnAlbum);
             }
         });
 
         return view;
+    }
+
+    private ArrayList<Song> getSongsInAlbum(Album album) {
+        ArrayList<Song> songsOfAlbum = new ArrayList<>();
+        for(Song song : SongsTab.sSongList){
+            if(song.getAlbumId() == album.getmId()){
+                songsOfAlbum.add(song);
+            }
+        }
+        return  songsOfAlbum;
     }
 
     private void getAlbumList() {

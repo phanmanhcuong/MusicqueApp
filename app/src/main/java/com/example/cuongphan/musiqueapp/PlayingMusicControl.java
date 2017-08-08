@@ -138,6 +138,7 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         public void run() {
             int duration = sMediaPlayer.getDuration();
             sSongProgressBar.setMax(duration);
+            //sSongProgressBar.setProgress(sMediaPlayer.getCurrentPosition());
 
             //update current position textview
             int current_position = sMediaPlayer.getCurrentPosition();
@@ -284,6 +285,8 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
             sMediaPlayer.prepare();
             sMediaPlayer.start();
 
+            sSongProgressBar.setProgress(0);
+
             tv_songname.setText(sCurrentSong.getTitle());
             tv_artist.setText(sCurrentSong.getArtist());
             int duration = sMediaPlayer.getDuration();
@@ -319,7 +322,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
             sImgBtnPlay.setImageResource(R.drawable.ic_media_pause);
 
             songListView.setSelection(sCurrentSongIndex);
-
             playingSongNotification.updateNotification(sCurrentSong.getTitle(), sCurrentSong.getArtist());
 
             MainScreen mainScreen = new MainScreen();
