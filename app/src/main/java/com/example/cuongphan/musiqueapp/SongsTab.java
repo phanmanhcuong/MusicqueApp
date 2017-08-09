@@ -98,12 +98,14 @@ public class SongsTab extends Fragment {
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int albumIdColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            int artistIdColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID);
             do {
                 long id = musicCursor.getLong(idColumn);
                 String title = musicCursor.getString(titleColumn);
                 String artist = musicCursor.getString(artistColumn);
                 long albumId = musicCursor.getLong(albumIdColumn);
-                sSongList.add(new Song(id, title, artist, albumId));
+                long artistId = musicCursor.getLong(artistIdColumn);
+                sSongList.add(new Song(id, title, artist, albumId, artistId));
             } while (musicCursor.moveToNext());
         }
     }

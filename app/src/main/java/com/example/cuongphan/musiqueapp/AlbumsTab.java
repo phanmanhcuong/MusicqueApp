@@ -32,7 +32,6 @@ public class AlbumsTab extends Fragment {
 
         AlbumAdapter albumAdapter = new AlbumAdapter(this.getActivity(), mAlbumList);
         mAlbumGridView.setAdapter(albumAdapter);
-
         mAlbumGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

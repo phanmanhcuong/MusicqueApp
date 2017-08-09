@@ -1,10 +1,7 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,49 +18,52 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 /**
- * Created by Admin on 8/7/2017.
+ * Created by Admin on 8/9/2017.
  */
 
-public class SongsInAnAlbum extends AppCompatActivity {
+public class ArtistSongs extends AppCompatActivity {
     private static final String STARTFOREGROUND_ACTION = "startforeground";
     private ArrayList<Song> mSongList = new ArrayList<>();
     private ArrayList<Song> mSwapSongList = new ArrayList<>();
+    private  GridView gv_song_list;
     private SongAdapter songAdapter;
-    private GridView gv_songList;
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.songs_in_an_album);
+        setContentView(R.layout.artist_songs);
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        String albumName = bundle.getString(String.valueOf(R.string.album_name));
-        String artist = bundle.getString(String.valueOf(R.string.artist));
-        String albumArt = bundle.getString(String.valueOf(R.string.album_art));
-        //final ArrayList<Song> songList = bundle.getParcelableArrayList((String.valueOf(R.string.album_songs)));
-        mSongList = bundle.getParcelableArrayList((String.valueOf(R.string.album_songs)));
+        Artist artist = bundle.getParcelable("artist");
+        mSongList = bundle.getParcelableArrayList(String.valueOf(R.string.song_list));
 
+        RelativeLayout rl_artist = (RelativeLayout)findViewById(R.id.rl_artist);
+        TextView tv_artist_name = (TextView)findViewById(R.id.tv_artist_name);
+        TextView tv_artist_album_number = (TextView)findViewById(R.id.tv_artist_albumnumber);
+        TextView tv_artist_song_number =  (TextView)findViewById(R.id.tv_artist_songnumber);
+        gv_song_list = (GridView)findViewById(R.id.gv_songlist);
 
-        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.rl_album);
-        TextView tv_albumname = (TextView)findViewById(R.id.tv_album_name);
-        TextView tv_artist = (TextView)findViewById(R.id.tv_artist);
-        gv_songList = (GridView)findViewById(R.id.gv_songlist);
-
-        if(albumArt == null){
-            relativeLayout.setBackgroundResource(R.drawable.album_background);
+        String artistName = artist.getmName();
+        int artistAlbumNumber = artist.getmAlbumNumber();
+        int artistSongNumber = mSongList.size();
+        tv_artist_name.setText(artistName);
+        if(artistAlbumNumber == 1){
+            tv_artist_album_number.setText(String.valueOf(artistAlbumNumber) + " Album");
         } else{
-            relativeLayout.setBackground(Drawable.createFromPath(albumArt));
+            tv_artist_album_number.setText(String.valueOf(artistAlbumNumber) + " Albums");
         }
-        tv_albumname.setText(albumName);
-        tv_artist.setText(artist);
+        if(artistSongNumber == 1){
+            tv_artist_song_number.setText(String.valueOf(artistSongNumber) + " Song");
+        } else{
+            tv_artist_song_number.setText(String.valueOf(artistSongNumber + " Songs"));
+        }
 
         songAdapter = new SongAdapter(this, mSongList);
-        gv_songList.setAdapter(songAdapter);
-        gv_songList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gv_song_list.setAdapter(songAdapter);
+        gv_song_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent songNotification = new Intent(view.getContext(), PlayingSongNotification.class);
@@ -91,20 +91,20 @@ public class SongsInAnAlbum extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String keyword) {
                 ArrayList<Song> searchSongList = new ArrayList<Song>();
-                for (Song song : mSongList){
-                    if(song.getTitle().toLowerCase().contains(keyword.toLowerCase())){
+                for (Song song : mSongList) {
+                    if (song.getTitle().toLowerCase().contains(keyword.toLowerCase())) {
                         searchSongList.add(song);
                     }
                 }
-                if(searchSongList.size() != 0){
+                if (searchSongList.size() != 0) {
                     mSwapSongList = new ArrayList<Song>(mSongList);
                     mSongList.clear();
                     mSongList = new ArrayList<Song>(searchSongList);
-                    songAdapter = new SongAdapter(SongsInAnAlbum.this, mSongList);
-                    gv_songList.setAdapter(null);
-                    gv_songList.setAdapter(songAdapter);
-                } else{
-                    Toast.makeText(SongsInAnAlbum.this, "No Result !", Toast.LENGTH_LONG).show();
+                    songAdapter = new SongAdapter(ArtistSongs.this, mSongList);
+                    gv_song_list.setAdapter(null);
+                    gv_song_list.setAdapter(songAdapter);
+                } else {
+                    Toast.makeText(ArtistSongs.this, "No Result !", Toast.LENGTH_LONG).show();
                 }
                 searchView.clearFocus();
                 return true;
@@ -128,9 +128,9 @@ public class SongsInAnAlbum extends AppCompatActivity {
                     mSongList.clear();
                     mSongList = new ArrayList<Song>(mSwapSongList);
                 }
-                SongAdapter songAdapter = new SongAdapter(SongsInAnAlbum.this, mSongList);
-                gv_songList.setAdapter(null);
-                gv_songList.setAdapter(songAdapter);
+                SongAdapter songAdapter = new SongAdapter(ArtistSongs.this, mSongList);
+                gv_song_list.setAdapter(null);
+                gv_song_list.setAdapter(songAdapter);
                 mSwapSongList.clear();
                 return true;
             }

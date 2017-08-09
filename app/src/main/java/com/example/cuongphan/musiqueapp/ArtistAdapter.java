@@ -45,7 +45,7 @@ public class ArtistAdapter extends BaseAdapter{
         TextView tv_artist_name = (TextView)convertView.findViewById(R.id.tv_artist_name);
         tv_artist_name.setText(currentArtist.getmName());
 
-        TextView tv_album_number = (TextView)convertView.findViewById(R.id.tv_artist_albumbumber);
+        TextView tv_album_number = (TextView)convertView.findViewById(R.id.tv_artist_albumnumber);
         if(currentArtist.getmAlbumNumber() == 1){
             tv_album_number.setText(String.valueOf(currentArtist.getmAlbumNumber()) + " Album");
         } else{

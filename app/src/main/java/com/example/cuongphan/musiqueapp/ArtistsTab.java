@@ -1,6 +1,7 @@
 package com.example.cuongphan.musiqueapp;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -33,8 +35,31 @@ public class ArtistsTab extends Fragment {
 
         ArtistAdapter artistAdapter = new ArtistAdapter(mArtistList, this.getActivity());
         mArtistGridView.setAdapter(artistAdapter);
+        mArtistGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Artist artist = mArtistList.get(position);
+                Intent intent = new Intent(view.getContext(), ArtistSongs.class);
+                ArrayList<Song> songList = getArtistSongs(artist.getmId());
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("artist", artist);
+                bundle.putParcelableArrayList(String.valueOf(R.string.song_list), songList);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
 
         return view;
+    }
+
+    private ArrayList<Song> getArtistSongs(long artistId) {
+        ArrayList<Song> songList = new ArrayList<>();
+        for(Song song: SongsTab.sSongList){
+            if(song.getArtistId() == artistId){
+                songList.add(song);
+            }
+        }
+        return songList;
     }
 
     private void getArtistList() {

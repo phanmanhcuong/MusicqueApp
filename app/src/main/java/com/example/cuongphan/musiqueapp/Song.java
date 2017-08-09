@@ -12,18 +12,22 @@ public class Song implements Parcelable{
     private String title;
     private String artist;
     private long albumId;
+    private long artistId;
 
-    public Song(long id, String title, String artist, long albumId) {
+    public Song(long id, String title, String artist, long albumId, long artistId) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.albumId = albumId;
+        this.artistId = artistId;
     }
 
     protected Song(Parcel in) {
         id = in.readLong();
         title = in.readString();
         artist = in.readString();
+        albumId = in.readLong();
+        artistId = in.readLong();
     }
 
     public static final Creator<Song> CREATOR = new Creator<Song>() {
@@ -66,6 +70,10 @@ public class Song implements Parcelable{
         return albumId;
     }
 
+    public long getArtistId() {
+        return artistId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -76,5 +84,7 @@ public class Song implements Parcelable{
         dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(artist);
+        dest.writeLong(albumId);
+        dest.writeLong(artistId);
     }
 }

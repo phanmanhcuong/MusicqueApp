@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_artist_albumbumber"/>
+        android:id="@+id/tv_artist_albumnumber"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

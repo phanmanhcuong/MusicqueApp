@@ -86,7 +86,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
 
         playingSongNotification = new PlayingSongNotification();
 
-
         //check if intent started from main screen's list song clicked or music control process clicked
         songListView = (GridView) findViewById(R.id.lv_playing_music);
         if (songInformation != null || sCurrentSong != null) {
@@ -331,7 +330,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         }
     }
 
-
     public void notificationActionHandle(String action) {
         switch (action){
             case PREV_ACTION:
@@ -388,8 +386,6 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
         }
         sSongAdapter.notifyDataSetChanged();
     }
-
-
 
     private class handleImageButtonsOnClick implements View.OnClickListener {
         int imgbtn_id;
@@ -449,8 +445,5 @@ public class PlayingMusicControl extends AppCompatActivity implements MediaPlaye
                     break;
             }
         }
-    }
-    void PlayingMusicControl(int i){
-        onCreate(null);
     }
 }
